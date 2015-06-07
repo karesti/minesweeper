@@ -1,5 +1,7 @@
 package org.duchessfr.minesweeper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Grid {
@@ -24,12 +26,23 @@ public class Grid {
 		this.cells = new Cell[size][size];
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
-				cells[x][y] = new Cell();
+				cells[x][y] = new Cell(x, y);
 			}
 		}
 
 		while (getActiveMines() < mines) {
 			cells[random.nextInt(size)][random.nextInt(size)].putMine();
+		}
+
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				int mines = 0;
+				for (Cell adj : getAdjacents(x, y)) {
+					if (adj.hasMine())
+						mines++;
+				}
+				cells[x][y].setNeighbourMinesCount(mines);
+			}
 		}
 	}
 
@@ -51,19 +64,54 @@ public class Grid {
 
 	@Override
 	public String toString() {
-		StringBuilder initState = new StringBuilder();
+		StringBuilder image = new StringBuilder();
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
-				initState.append(cells[x][y]);
+				image.append(cells[x][y]);
+				image.append(" ");
 			}
-			initState.append("\n");
+			image.append("\n");
 		}
-		return initState.toString();
+		return image.toString();
 	}
 
 	public boolean open(int x, int y) {
-		cells[x][y].open();
-		return !cells[x][y].isExplosed();
+		return new CellOpener(this, x, y).open();
+	}
+
+	public List<Cell> getAdjacents(int x, int y) {
+		List<Cell> adj = new ArrayList<Cell>();
+		if (x > 0) {
+			adj.add(cells[x - 1][y]);
+			if (y < size - 1) {
+				adj.add(cells[x - 1][y + 1]);
+			}
+			if (y > 0) {
+				adj.add(cells[x - 1][y - 1]);
+			}
+		}
+		if (x < size - 1) {
+			adj.add(cells[x + 1][y]);
+			if (y < size - 1) {
+				adj.add(cells[x + 1][y + 1]);
+			}
+			if (y > 0) {
+				adj.add(cells[x + 1][y - 1]);
+			}
+		}
+
+		if (y > 0) {
+			adj.add(cells[x][y - 1]);
+		}
+		if (y < size - 1) {
+			adj.add(cells[x][y + 1]);
+		}
+
+		return adj;
+	}
+
+	public Cell getCell(int x, int y) {
+		return cells[x][y];
 	}
 
 	public boolean tagMine(int x, int y) {

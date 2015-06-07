@@ -6,28 +6,50 @@ public class Cell {
 		CLOSED, TAGGED, OPENED, EXPLOSED
 	}
 
+	private final int x;
+
+	private final int y;
+
 	private int neighbourMinesCount;
 
 	private boolean mine;
 
 	private Status status = Status.CLOSED;
 
+	public Cell() {
+		this.x = 0;
+		this.y = 0;
+	}
+
+	public Cell(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	@Override
 	public String toString() {
 
-		String image = null;
+		StringBuilder image = new StringBuilder();
+		image.append("(");
+		image.append(x);
+		image.append(",");
+		image.append(y);
+		image.append(")");
 
 		switch (status) {
 		case CLOSED:
-			image = "[ # ]";
+			image.append("[ # ]");
 			break;
 
 		case TAGGED:
-			image = "[ M ]";
+			image.append("[ M ]");
 			break;
 
 		case OPENED:
-			image = neighbourMinesCount == 0 ? "[ _ ]" : "[ " + neighbourMinesCount + " ]";
+			if (neighbourMinesCount == 0)
+				image.append("[ _ ]");
+			else
+				image.append("[ " + neighbourMinesCount + " ]");
 			break;
 
 		default:
@@ -35,7 +57,7 @@ public class Cell {
 
 		}
 
-		return image;
+		return image.toString();
 	}
 
 	public void setNeighbourMinesCount(int neighbourMinesCount) {
@@ -80,5 +102,13 @@ public class Cell {
 
 	public boolean isClosed() {
 		return status == Status.CLOSED;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 }

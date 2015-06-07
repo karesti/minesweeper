@@ -2,6 +2,8 @@ package org.duchessfr.minesweeper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.Test;
 
 public class GridTest {
@@ -46,14 +48,11 @@ public class GridTest {
 	@Test
 	public void can_print_cell() {
 
-		Grid grid = new Grid(5, 3);
+		Grid grid = new Grid(2, 1);
 
 		StringBuilder initState = new StringBuilder();
-		initState.append("[ # ][ # ][ # ][ # ][ # ]\n");
-		initState.append("[ # ][ # ][ # ][ # ][ # ]\n");
-		initState.append("[ # ][ # ][ # ][ # ][ # ]\n");
-		initState.append("[ # ][ # ][ # ][ # ][ # ]\n");
-		initState.append("[ # ][ # ][ # ][ # ][ # ]\n");
+		initState.append("(0,0)[ # ] (0,1)[ # ] \n");
+		initState.append("(1,0)[ # ] (1,1)[ # ] \n");
 
 		assertThat(grid.toString()).isEqualTo(initState.toString());
 
@@ -79,5 +78,25 @@ public class GridTest {
 		grid.untagMine(0, 0);
 
 		assertThat(grid.allMinesFound()).isFalse();
+	}
+
+	@Test
+	public void can_get_adjacents() {
+
+		Grid grid = new Grid(3, 0);
+
+		List<Cell> adjacents = grid.getAdjacents(0, 0);
+
+		assertThat(adjacents).hasSize(3);
+		assertThat(adjacents).containsOnly(grid.getCell(0, 1), grid.getCell(1, 1), grid.getCell(1, 0));
+
+		adjacents = grid.getAdjacents(1, 1);
+
+		assertThat(adjacents).hasSize(8);
+		assertThat(adjacents).doesNotContain(grid.getCell(1, 1));
+
+		adjacents = grid.getAdjacents(2, 2);
+		assertThat(adjacents).containsOnly(grid.getCell(1, 2), grid.getCell(2, 1), grid.getCell(1, 1));
+
 	}
 }

@@ -66,7 +66,7 @@ public class CellTest {
 
 		Cell cell = new Cell();
 
-		assertThat(cell.toString()).isEqualTo("[ # ]");
+		assertThat(cell.toString()).isEqualTo("(0,0)[ # ]");
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class CellTest {
 		Cell cell = new Cell();
 		cell.open();
 
-		assertThat(cell.toString()).isEqualTo("[ _ ]");
+		assertThat(cell.toString()).isEqualTo("(0,0)[ _ ]");
 
 	}
 
@@ -86,7 +86,7 @@ public class CellTest {
 		cell.setNeighbourMinesCount(2);
 		cell.open();
 
-		assertThat(cell.toString()).isEqualTo("[ 2 ]");
+		assertThat(cell.toString()).isEqualTo("(0,0)[ 2 ]");
 
 	}
 
@@ -96,7 +96,7 @@ public class CellTest {
 		Cell cell = new Cell();
 		cell.tagAsMine();
 
-		assertThat(cell.toString()).isEqualTo("[ M ]");
+		assertThat(cell.toString()).isEqualTo("(0,0)[ M ]");
 
 	}
 
