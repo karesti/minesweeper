@@ -1,3 +1,5 @@
 .project
 .classpath
+.settings
+target
 o END W3TC Browser Cache
