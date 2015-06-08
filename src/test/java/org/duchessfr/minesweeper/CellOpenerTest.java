@@ -7,7 +7,7 @@ import org.junit.Test;
 public class CellOpenerTest {
 
 	@Test
-	public void opening_a_cell_opens_every_neighbour_empty_cell() {
+	public void opening_a_cell_opens_every_neighbour_empty_cell_without_neighbours() {
 		Grid grid = new Grid(3, 0);
 		CellOpener opener = new CellOpener(grid, 0, 0);
 

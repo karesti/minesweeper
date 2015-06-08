@@ -83,7 +83,8 @@ public class CellTest {
 	public void can_print_discovered_with_mines() {
 
 		Cell cell = new Cell();
-		cell.setNeighbourMinesCount(2);
+		cell.incrementNeighbourMineCount();
+		cell.incrementNeighbourMineCount();
 		cell.open();
 
 		assertThat(cell.toString()).isEqualTo("(0,0)[ 2 ]");

@@ -18,10 +18,14 @@ public class CellOpener {
 
 	public boolean open() {
 
-		grid.getCell(x, y).open();
+		Cell selected = grid.getCell(x, y);
+		selected.open();
 
 		if (grid.getCell(x, y).isExplosed())
 			return false;
+
+		if (selected.getNeighbourMinesCount() > 0)
+			return true;
 
 		Queue<Cell> aux = new LinkedList<Cell>();
 		aux.add(grid.getCell(x, y));

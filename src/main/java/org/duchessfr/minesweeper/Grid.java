@@ -14,7 +14,6 @@ public class Grid {
 	public Grid(int size, int mines) {
 		this.size = size;
 		this.mines = mines;
-
 		init();
 	}
 
@@ -22,35 +21,37 @@ public class Grid {
 		if (!isValid())
 			return;
 
+		initMatrix();
+
+		putRandomMines();
+	}
+
+	private void putRandomMines() {
 		Random random = new Random();
+		while (getActiveMines() < mines) {
+			int randomX = random.nextInt(size);
+			int randomY = random.nextInt(size);
+			Cell cell = cells[randomX][randomY];
+			cell.putMine();
+			for (Cell adj : getAdjacents(randomX, randomY))
+				adj.incrementNeighbourMineCount();
+		}
+	}
+
+	boolean isValid() {
+		return size >= 1 && mines <= size;
+	}
+
+	private void initMatrix() {
 		this.cells = new Cell[size][size];
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
 				cells[x][y] = new Cell(x, y);
 			}
 		}
-
-		while (getActiveMines() < mines) {
-			cells[random.nextInt(size)][random.nextInt(size)].putMine();
-		}
-
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				int mines = 0;
-				for (Cell adj : getAdjacents(x, y)) {
-					if (adj.hasMine())
-						mines++;
-				}
-				cells[x][y].setNeighbourMinesCount(mines);
-			}
-		}
 	}
 
-	public boolean isValid() {
-		return size >= 1 && mines <= size;
-	}
-
-	public int getActiveMines() {
+	int getActiveMines() {
 		int mines = 0;
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {

@@ -60,10 +60,6 @@ public class Cell {
 		return image.toString();
 	}
 
-	public void setNeighbourMinesCount(int neighbourMinesCount) {
-		this.neighbourMinesCount = neighbourMinesCount;
-	}
-
 	public void putMine() {
 		this.mine = true;
 	}
@@ -115,4 +111,9 @@ public class Cell {
 	public int getNeighbourMinesCount() {
 		return neighbourMinesCount;
 	}
+
+	public void incrementNeighbourMineCount() {
+		this.neighbourMinesCount++;
+	}
+
 }

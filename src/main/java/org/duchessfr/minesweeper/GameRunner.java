@@ -6,15 +6,9 @@ public class GameRunner {
 
 		try (PlayerInputReader reader = new PlayerInputReader()) {
 
-			int size = -1;
-			while (size != -1) {
-				size = reader.readSize();
-			}
+			int size = reader.readSize();
 
-			int mines = -1;
-			while (mines != -1) {
-				mines = reader.readMines();
-			}
+			int mines = reader.readMines();
 
 			Game game = new Game(new Grid(size, mines), new Player(mines), reader);
 
