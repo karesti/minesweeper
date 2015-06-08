@@ -1,78 +1,113 @@
 package org.duchessfr.minesweeper;
 
-import org.assertj.core.util.VisibleForTesting;
-
 public class Game {
 
-	private Grid grid;
-	private int mines;
-	private boolean explosed;
-	private boolean minesFound;
-
-	public Game() {
-
-	}
-
-	@VisibleForTesting
-	Game(Grid grid) {
-		this.grid = grid;
-		this.mines = grid.getMines();
-	}
+	private final PlayerInputReader reader;
+	private final Grid grid;
+	private final Player player;
 
 	public static void main(String[] args) {
 
-		Game game = new Game();
+		try (PlayerInputReader reader = new PlayerInputReader()) {
 
-		game.start();
+			int size = -1;
+			while (size != -1) {
+				size = reader.readSize();
+			}
 
-		while (!game.isOver()) {
-			game.askAction();
+			int mines = -1;
+			while (mines != -1) {
+				mines = reader.readMines();
+			}
+
+			Game game = new Game(new Grid(size, mines), new Player(mines), reader);
+
+			game.run();
+
+		} catch (Exception ex) {
+			System.err.println("Problem found ! ");
+			ex.printStackTrace();
 		}
-
-		game.end();
-
 	}
 
-	private void end() {
-		// TODO Auto-generated method stub
+	public Game(Grid grid, Player player, PlayerInputReader reader) {
+		this.reader = reader;
+		this.grid = grid;
+		this.player = player;
+	}
 
+	public void run() {
+
+		while (!isOver()) {
+			askAction();
+		}
+
+		end();
 	}
 
 	private void askAction() {
-		// TODO Auto-generated method stub
 
-	}
+		printGameStatus();
 
-	public boolean isOver() {
-		return explosed || minesFound;
-	}
+		int x = reader.readX(grid.getSize());
+		int y = reader.readY(grid.getSize());
+		int action = reader.readAction();
 
-	void start() {
-		grid = new Grid(5, 3);
-	}
-
-	public void start(int size, int mines) {
-		grid = new Grid(size, mines);
-		this.mines = mines;
-	}
-
-	public void open(int x, int y) {
-		this.explosed = !grid.open(x, y);
-	}
-
-	public void tagMine(int x, int y) {
-		if (mines > 0) {
-			mines--;
-			this.minesFound = grid.tagMine(x, y);
+		switch (action) {
+		case 1:
+			open(x, y);
+			break;
+		case 2:
+			tagMine(x, y);
+			break;
+		case 3:
+			untagMine(x, y);
+			break;
+		default:
 		}
 	}
 
-	public int getMines() {
-		return this.mines;
+	private void end() {
+		printGameStatus();
+
+		if (player.isDead())
+			System.out.println("You are dead !!");
+		else
+			System.out.println("You are the master of the mines !! Well done");
+
 	}
 
-	public void untagMine(int x, int y) {
-		grid.untagMine(x, y);
-		mines++;
+	private void printGameStatus() {
+		System.out.println(player);
+		System.out.println(grid);
+	}
+
+	boolean isOver() {
+		return player.isDead() || player.isTheMasterOfMines();
+	}
+
+	void open(int x, int y) {
+		player.setExplosed(!grid.open(x, y));
+	}
+
+	void tagMine(int x, int y) {
+		if (player.hasMinesLeft()) {
+			player.decrementMinedLeft();
+			boolean isMine = grid.tagMine(x, y);
+			if (isMine) {
+				player.incrementFoundMines();
+			}
+		}
+	}
+
+	void untagMine(int x, int y) {
+		if (grid.getCell(x, y).isTagged()) {
+			grid.untagMine(x, y);
+			player.incrementMinesLeft();
+			boolean isMine = grid.getCell(x, y).hasMine();
+			if (isMine) {
+				player.decrementFoundMines();
+			}
+		}
 	}
 }

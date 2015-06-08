@@ -59,28 +59,6 @@ public class GridTest {
 	}
 
 	@Test
-	public void all_the_mines_are_found_when_every_mine_is_tagged() {
-
-		Grid grid = new Grid(1, 1);
-
-		assertThat(grid.allMinesFound()).isFalse();
-
-		grid.tagMine(0, 0);
-
-		assertThat(grid.allMinesFound()).isTrue();
-	}
-
-	@Test
-	public void can_untag_cell() {
-		Grid grid = new Grid(1, 1);
-
-		grid.tagMine(0, 0);
-		grid.untagMine(0, 0);
-
-		assertThat(grid.allMinesFound()).isFalse();
-	}
-
-	@Test
 	public void can_get_adjacents() {
 
 		Grid grid = new Grid(3, 0);

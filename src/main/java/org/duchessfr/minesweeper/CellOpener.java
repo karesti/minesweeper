@@ -30,7 +30,8 @@ public class CellOpener {
 			for (Cell adj : grid.getAdjacents(current.getX(), current.getY())) {
 				if (adj.isClosed() && !adj.hasMine()) {
 					adj.open();
-					aux.add(adj);
+					if (adj.getNeighbourMinesCount() == 0)
+						aux.add(adj);
 				}
 			}
 		}

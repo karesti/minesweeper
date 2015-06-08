@@ -116,28 +116,20 @@ public class Grid {
 
 	public boolean tagMine(int x, int y) {
 		cells[x][y].tagAsMine();
-		return allMinesFound();
+		return cells[x][y].hasMine();
 	}
 
 	public boolean untagMine(int x, int y) {
 		cells[x][y].untagAsMine();
-		return cells[x][y].isClosed();
-	}
-
-	boolean allMinesFound() {
-
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				if (cells[x][y].hasMine() && !cells[x][y].isTagged())
-					return false;
-			}
-		}
-
-		return true;
+		return cells[x][y].hasMine();
 	}
 
 	public int getMines() {
 		return mines;
+	}
+
+	public int getSize() {
+		return size;
 	}
 
 }
