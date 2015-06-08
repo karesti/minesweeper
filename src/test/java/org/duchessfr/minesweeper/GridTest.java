@@ -15,7 +15,7 @@ public class GridTest {
 
 	@Test
 	public void invalid_game_if_mines_value_is_less_than_size() {
-		assertThat(new Grid(10, 11).isValid()).isFalse();
+		assertThat(new Grid(10, 101).isValid()).isFalse();
 	}
 
 	@Test

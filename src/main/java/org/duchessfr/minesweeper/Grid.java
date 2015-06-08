@@ -39,7 +39,7 @@ public class Grid {
 	}
 
 	boolean isValid() {
-		return size >= 1 && mines <= size;
+		return size >= 1 && mines <= (size * size);
 	}
 
 	private void initMatrix() {
