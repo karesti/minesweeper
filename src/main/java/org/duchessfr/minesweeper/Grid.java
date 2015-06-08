@@ -77,7 +77,11 @@ public class Grid {
 	}
 
 	public boolean open(int x, int y) {
-		return new CellOpener(this, x, y).open();
+		boolean explosed = true;
+		if (getCell(x, y).isClosed()) {
+			explosed = new CellOpener(this, x, y).open();
+		}
+		return explosed;
 	}
 
 	public List<Cell> getAdjacents(int x, int y) {

@@ -39,6 +39,16 @@ public class GridTest {
 	}
 
 	@Test
+	public void can_not_open_is_tagged() {
+		Grid grid = new Grid(1, 1);
+
+		grid.tagMine(0, 0);
+
+		assertThat(grid.open(0, 0)).isTrue();
+		assertThat(grid.getCell(0, 0).isTagged()).isTrue();
+	}
+
+	@Test
 	public void fail_if_opened_cell_is_mine() {
 		Grid grid = new Grid(1, 1);
 

@@ -1,6 +1,5 @@
 package org.duchessfr.minesweeper;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class PlayerInputReader implements AutoCloseable {
@@ -18,13 +17,13 @@ public class PlayerInputReader implements AutoCloseable {
 	public int readSize() {
 		System.out.println("Enter size :");
 
-		return readSaveInt("Size must be a number !");
+		return readSaveInt();
 	}
 
 	public int readMines() {
 		System.out.println("Enter mines :");
 
-		return readSaveInt("Mines must be a number !");
+		return readSaveInt();
 	}
 
 	public int readX(int max) {
@@ -42,7 +41,7 @@ public class PlayerInputReader implements AutoCloseable {
 	public int readAction() {
 		System.out.println("Open [1], Tag Mine [2], Untag Mine [3], Cancel [4] : ");
 
-		return readSaveInt("Must be a valid action !");
+		return readSaveInt();
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class PlayerInputReader implements AutoCloseable {
 
 	private int readSaveCoordinate(int min, int max) {
 
-		int coordinate = readSaveInt("Must be a valid coordinate !");
+		int coordinate = readSaveInt();
 
 		if (coordinate < min || coordinate > max) {
 			System.out.println("Give a valid coordinate please");
@@ -62,15 +61,13 @@ public class PlayerInputReader implements AutoCloseable {
 		return coordinate;
 	}
 
-	private int readSaveInt(String message) {
-		int mines = -1;
+	private int readSaveInt() {
 
-		try {
-			mines = scanner.nextInt();
-		} catch (InputMismatchException ex) {
-			System.out.println(message);
+		while (!scanner.hasNextInt()) {
+			scanner.next();
 		}
-		return mines;
+
+		return scanner.nextInt();
 	}
 
 }

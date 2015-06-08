@@ -63,7 +63,8 @@ public class Game {
 	}
 
 	void open(int x, int y) {
-		player.setExplosed(!grid.open(x, y));
+		boolean explosed = !grid.open(x, y);
+		player.setExplosed(explosed);
 	}
 
 	void tagMine(int x, int y) {
