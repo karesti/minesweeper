@@ -6,30 +6,6 @@ public class Game {
 	private final Grid grid;
 	private final Player player;
 
-	public static void main(String[] args) {
-
-		try (PlayerInputReader reader = new PlayerInputReader()) {
-
-			int size = -1;
-			while (size != -1) {
-				size = reader.readSize();
-			}
-
-			int mines = -1;
-			while (mines != -1) {
-				mines = reader.readMines();
-			}
-
-			Game game = new Game(new Grid(size, mines), new Player(mines), reader);
-
-			game.run();
-
-		} catch (Exception ex) {
-			System.err.println("Problem found ! ");
-			ex.printStackTrace();
-		}
-	}
-
 	public Game(Grid grid, Player player, PlayerInputReader reader) {
 		this.reader = reader;
 		this.grid = grid;
