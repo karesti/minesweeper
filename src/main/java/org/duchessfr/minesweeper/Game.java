@@ -22,7 +22,6 @@ public class Game {
 	}
 
 	private void askAction() {
-
 		printGameStatus();
 
 		int x = reader.readX(grid.getSize());
@@ -78,10 +77,10 @@ public class Game {
 	}
 
 	void untagMine(int x, int y) {
-		if (grid.getCell(x, y).isTagged()) {
+		if (grid.isTagged(x, y)) {
 			grid.untagMine(x, y);
 			player.incrementMinesLeft();
-			boolean isMine = grid.getCell(x, y).hasMine();
+			boolean isMine = grid.hasMine(x, y);
 			if (isMine) {
 				player.decrementFoundMines();
 			}

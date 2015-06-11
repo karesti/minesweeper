@@ -18,14 +18,19 @@ public class CellOpener {
 
 	public boolean open() {
 
+		boolean saveOpen = true;
+
 		Cell selected = grid.getCell(x, y);
+		if (!selected.isClosed())
+			return saveOpen;
+
 		selected.open();
 
 		if (grid.getCell(x, y).isExplosed())
 			return false;
 
 		if (selected.getNeighbourMinesCount() > 0)
-			return true;
+			return saveOpen;
 
 		Queue<Cell> aux = new LinkedList<Cell>();
 		aux.add(grid.getCell(x, y));
@@ -39,6 +44,6 @@ public class CellOpener {
 				}
 			}
 		}
-		return true;
+		return saveOpen;
 	}
 }

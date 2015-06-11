@@ -17,6 +17,12 @@ public class Grid {
 		init();
 	}
 
+	public Grid(Cell[][] cells) {
+		this.size = cells.length;
+		this.mines = getActiveMines();
+		this.cells = cells;
+	}
+
 	void init() {
 		if (!isValid())
 			return;
@@ -77,10 +83,9 @@ public class Grid {
 	}
 
 	public boolean open(int x, int y) {
-		boolean explosed = true;
-		if (getCell(x, y).isClosed()) {
-			explosed = new CellOpener(this, x, y).open();
-		}
+
+		boolean explosed = new CellOpener(this, x, y).open();
+
 		return explosed;
 	}
 
@@ -117,6 +122,14 @@ public class Grid {
 
 	public Cell getCell(int x, int y) {
 		return cells[x][y];
+	}
+
+	public boolean hasMine(int x, int y) {
+		return getCell(x, y).hasMine();
+	}
+
+	public boolean isTagged(int x, int y) {
+		return getCell(x, y).isTagged();
 	}
 
 	public boolean tagMine(int x, int y) {

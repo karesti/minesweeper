@@ -21,4 +21,16 @@ public class CellOpenerTest {
 		assertThat(grid.toString()).isEqualTo(afterOpeningState.toString());
 	}
 
+	@Test
+	public void opening_a_tagged_cell_does_nothing() {
+
+		Grid grid = new Grid(1, 1);
+
+		grid.tagMine(0, 0);
+		Cell cell = grid.getCell(0, 0);
+		CellOpener opener = new CellOpener(grid, 0, 0);
+
+		assertThat(grid.toString()).isEqualTo(cell.toString());
+
+	}
 }
