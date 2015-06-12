@@ -51,7 +51,9 @@ public class Cell {
 			else
 				image.append("[ " + neighbourMinesCount + " ]");
 			break;
-
+		case EXPLOSED:
+			image.append("[ @ ]");
+			break;
 		default:
 			throw new IllegalStateException("Status cell is not correct");
 
