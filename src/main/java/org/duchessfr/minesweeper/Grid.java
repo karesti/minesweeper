@@ -1,79 +1,91 @@
 package org.duchessfr.minesweeper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
+
+import org.duchessfr.minesweeper.Cell.Status;
 
 public class Grid {
 
-	private final int size;
-	private final int mines;
+	private final GridConfig config;
 
-	private Cell[][] cells;
+	private final Cell[][] cells;
 
-	public Grid(int size, int mines) {
-		this.size = size;
-		this.mines = mines;
-		init();
-	}
-
-	public Grid(Cell[][] cells) {
-		this.size = cells.length;
-		this.mines = getActiveMines();
+	private Grid(GridConfig config, Cell[][] cells) {
+		this.config = config;
 		this.cells = cells;
 	}
 
-	void init() {
-		if (!isValid())
-			return;
+	public static class GridBuilder {
+		private GridConfig config;
+		private Cell[][] cells;
 
-		initMatrix();
-
-		putRandomMines();
-	}
-
-	private void putRandomMines() {
-		Random random = new Random();
-		while (getActiveMines() < mines) {
-			int randomX = random.nextInt(size);
-			int randomY = random.nextInt(size);
-			Cell cell = cells[randomX][randomY];
-			cell.putMine();
-			for (Cell adj : getAdjacents(randomX, randomY))
-				adj.incrementNeighbourMineCount();
+		private GridBuilder(GridConfig config, Cell[][] cells) {
+			this.config = config;
+			this.cells = cells;
 		}
-	}
 
-	boolean isValid() {
-		return size >= 1 && mines <= (size * size);
-	}
+		public static GridBuilder config(GridConfig config) {
+			return new GridBuilder(config, new Cell[config.getSize()][config.getSize()]);
+		}
 
-	private void initMatrix() {
-		this.cells = new Cell[size][size];
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				cells[x][y] = new Cell(x, y);
+		public Grid create() {
+
+			if (!config.isValid()) {
+				throw new IllegalStateException("Provided grid configuration is not correct");
 			}
-		}
-	}
 
-	int getActiveMines() {
-		int mines = 0;
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				if (cells[x][y].hasMine()) {
-					mines++;
+			settingRandomMines();
+
+			settingEmptyCellsAndAdjacentsMinesCount();
+
+			return new Grid(config, cells);
+		}
+
+		private void settingRandomMines() {
+			Random random = new Random();
+			int mines = config.getMines();
+			while (mines > 0) {
+				int randomX = random.nextInt(config.getSize());
+				int randomY = random.nextInt(config.getSize());
+				if (empty(randomX, randomY)) {
+					cells[randomX][randomY] = Cell.Builder.start(new Coordinate(randomX, randomY)).withMine().build();
+					mines--;
 				}
 			}
 		}
-		return mines;
+
+		private void settingEmptyCellsAndAdjacentsMinesCount() {
+			for (int x = 0; x < config.getSize(); x++) {
+				for (int y = 0; y < config.getSize(); y++) {
+					if (empty(x, y)) {
+						int numMines = 0;
+						for (Coordinate adjCo : config.getValidAdjacentCoordinates(new Coordinate(x, y))) {
+							Cell adj = cells[adjCo.getX()][adjCo.getY()];
+
+							if (adj != null && adj.hasMine()) {
+								numMines++;
+							}
+						}
+
+						cells[x][y] = Cell.Builder.start(new Coordinate(x, y)).withAdjacentMinesCount(numMines).build();
+					}
+				}
+			}
+		}
+
+		private boolean empty(int x, int y) {
+			return cells[x][y] == null;
+		}
+
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder image = new StringBuilder();
-		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
+		for (int x = 0; x < config.getSize(); x++) {
+			for (int y = 0; y < config.getSize(); y++) {
 				image.append(cells[x][y]);
 				image.append(" ");
 			}
@@ -82,72 +94,73 @@ public class Grid {
 		return image.toString();
 	}
 
-	public boolean open(int x, int y) {
+	public boolean open(Coordinate co) {
 
-		boolean explosed = new CellOpener(this, x, y).open();
+		boolean saveOpen = true;
 
-		return explosed;
-	}
+		Cell selected = this.get(co);
+		if (!selected.isClosed())
+			return true;
 
-	public List<Cell> getAdjacents(int x, int y) {
-		List<Cell> adj = new ArrayList<Cell>();
-		if (x > 0) {
-			adj.add(cells[x - 1][y]);
-			if (y < size - 1) {
-				adj.add(cells[x - 1][y + 1]);
-			}
-			if (y > 0) {
-				adj.add(cells[x - 1][y - 1]);
-			}
-		}
-		if (x < size - 1) {
-			adj.add(cells[x + 1][y]);
-			if (y < size - 1) {
-				adj.add(cells[x + 1][y + 1]);
-			}
-			if (y > 0) {
-				adj.add(cells[x + 1][y - 1]);
-			}
+		if (selected.hasMine()) {
+			selected = selected.copy(Status.EXPLOSED);
+			this.put(selected);
+			return false;
 		}
 
-		if (y > 0) {
-			adj.add(cells[x][y - 1]);
+		selected = selected.copy(Status.OPENED);
+		this.put(selected);
+
+		if (selected.getAdjacentMinesCount() > 0)
+			return saveOpen;
+
+		Queue<Cell> aux = new LinkedList<Cell>();
+		aux.add(selected);
+		while (!aux.isEmpty()) {
+			Cell current = aux.poll();
+			for (Coordinate adjCo : config.getValidAdjacentCoordinates(current.getCoordinate())) {
+				Cell adj = this.get(adjCo);
+				if (adj.isClosed() && !adj.hasMine()) {
+					adj = adj.copy(Status.OPENED);
+					put(adj);
+					if (adj.getAdjacentMinesCount() == 0)
+						aux.add(adj);
+				}
+			}
 		}
-		if (y < size - 1) {
-			adj.add(cells[x][y + 1]);
+		return saveOpen;
+	}
+
+	public boolean tagMine(Coordinate co) {
+		Cell cell = get(co);
+		if (cell.isClosed()) {
+			put(cell.copy(Status.TAGGED));
 		}
-
-		return adj;
+		return cell.hasMine();
 	}
 
-	public Cell getCell(int x, int y) {
-		return cells[x][y];
-	}
-
-	public boolean hasMine(int x, int y) {
-		return getCell(x, y).hasMine();
-	}
-
-	public boolean isTagged(int x, int y) {
-		return getCell(x, y).isTagged();
-	}
-
-	public boolean tagMine(int x, int y) {
-		cells[x][y].tagAsMine();
-		return cells[x][y].hasMine();
-	}
-
-	public boolean untagMine(int x, int y) {
-		cells[x][y].untagAsMine();
-		return cells[x][y].hasMine();
+	public boolean untagMine(Coordinate co) {
+		Cell cell = get(co);
+		if (cell.isTagged()) {
+			put(cell.copy(Status.CLOSED));
+		}
+		return get(co).hasMine();
 	}
 
 	public int getMines() {
-		return mines;
+		return config.getMines();
 	}
 
 	public int getSize() {
-		return size;
+		return config.getSize();
+	}
+
+	public Cell get(Coordinate co) {
+		return cells[co.getX()][co.getY()];
+	}
+
+	private void put(Cell cell) {
+		cells[cell.getCoordinate().getX()][cell.getCoordinate().getY()] = cell;
 	}
 
 }

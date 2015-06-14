@@ -9,23 +9,14 @@ import org.junit.Test;
 public class PlayerInputReaderTest {
 
 	@Test
-	public void can_read_only_valid_size() throws Exception {
+	public void can_read_only_valid_config() throws Exception {
 
-		Scanner scanner = new Scanner("foo 10");
-
-		try (PlayerInputReader reader = new PlayerInputReader(scanner)) {
-			assertThat(reader.readSize()).isEqualTo(10);
-		}
-
-	}
-
-	@Test
-	public void can_read_only_valid_mines() throws Exception {
-
-		Scanner scanner = new Scanner(" foo 9");
+		Scanner scanner = new Scanner("foo 3 bar 2");
 
 		try (PlayerInputReader reader = new PlayerInputReader(scanner)) {
-			assertThat(reader.readMines()).isEqualTo(9);
+			GridConfig config = reader.readConfiguration();
+			assertThat(config.getSize()).isEqualTo(3);
+			assertThat(config.getMines()).isEqualTo(2);
 		}
 
 	}

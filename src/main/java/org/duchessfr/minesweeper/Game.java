@@ -26,17 +26,18 @@ public class Game {
 
 		int x = reader.readX(grid.getSize());
 		int y = reader.readY(grid.getSize());
+		Coordinate co = new Coordinate(x, y);
 		int action = reader.readAction();
 
 		switch (action) {
 		case 1:
-			open(x, y);
+			open(co);
 			break;
 		case 2:
-			tagMine(x, y);
+			tagMine(co);
 			break;
 		case 3:
-			untagMine(x, y);
+			untagMine(co);
 			break;
 		default:
 		}
@@ -61,29 +62,32 @@ public class Game {
 		return player.isDead() || player.isTheMasterOfMines();
 	}
 
-	void open(int x, int y) {
-		boolean explosed = !grid.open(x, y);
-		player.setExplosed(explosed);
+	void open(Coordinate co) {
+		grid.open(co);
+		player.setExplosed(grid.get(co).isExplosed());
 	}
 
-	void tagMine(int x, int y) {
+	void tagMine(Coordinate co) {
+		if (grid.get(co).isTagged())
+			return;
+
 		if (player.hasMinesLeft()) {
 			player.decrementMinedLeft();
-			boolean isMine = grid.tagMine(x, y);
-			if (isMine) {
+			grid.tagMine(co);
+			if (grid.get(co).hasMine()) {
 				player.incrementFoundMines();
 			}
 		}
 	}
 
-	void untagMine(int x, int y) {
-		if (grid.isTagged(x, y)) {
-			grid.untagMine(x, y);
-			player.incrementMinesLeft();
-			boolean isMine = grid.hasMine(x, y);
-			if (isMine) {
-				player.decrementFoundMines();
-			}
+	void untagMine(Coordinate co) {
+		if (!grid.get(co).isTagged())
+			return;
+
+		grid.untagMine(co);
+		player.incrementMinesLeft();
+		if (grid.get(co).hasMine()) {
+			player.decrementFoundMines();
 		}
 	}
 }

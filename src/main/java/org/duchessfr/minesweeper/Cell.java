@@ -6,35 +6,64 @@ public class Cell {
 		CLOSED, TAGGED, OPENED, EXPLOSED
 	}
 
-	private final int x;
+	private final Status status;
 
-	private final int y;
+	private final Coordinate coordinate;
 
-	private int neighbourMinesCount;
+	private final boolean mine;
 
-	private boolean mine;
+	private final int adjacentMinesCount;
 
-	private Status status = Status.CLOSED;
-
-	public Cell() {
-		this.x = 0;
-		this.y = 0;
+	private Cell(Coordinate coordinate, int neighbourMinesCount, boolean hasMine, Status status) {
+		this.coordinate = coordinate;
+		this.mine = hasMine;
+		this.adjacentMinesCount = neighbourMinesCount;
+		this.status = status;
 	}
 
-	public Cell(int x, int y) {
-		this.x = x;
-		this.y = y;
+	static public class Builder {
+
+		private final Coordinate coordinate;
+
+		private Status status = Status.CLOSED;
+
+		private boolean mine = false;
+
+		private int adjacentMinesCount = 0;
+
+		private Builder(Coordinate coordinate) {
+			this.coordinate = coordinate;
+		}
+
+		public static Builder start(Coordinate coordinate) {
+			return new Builder(coordinate);
+		}
+
+		public Builder withMine() {
+			this.mine = true;
+			return this;
+		}
+
+		public Builder withAdjacentMinesCount(int adjMinesCount) {
+			this.adjacentMinesCount = adjMinesCount;
+			return this;
+		}
+
+		public Builder withStatus(Status status) {
+			this.status = status;
+			return this;
+		}
+
+		public Cell build() {
+			return new Cell(coordinate, adjacentMinesCount, mine, status);
+		}
 	}
 
 	@Override
 	public String toString() {
 
 		StringBuilder image = new StringBuilder();
-		image.append("(");
-		image.append(x);
-		image.append(",");
-		image.append(y);
-		image.append(")");
+		image.append(coordinate);
 
 		switch (status) {
 		case CLOSED:
@@ -46,10 +75,10 @@ public class Cell {
 			break;
 
 		case OPENED:
-			if (neighbourMinesCount == 0)
+			if (adjacentMinesCount == 0)
 				image.append("[ _ ]");
 			else
-				image.append("[ " + neighbourMinesCount + " ]");
+				image.append("[ " + adjacentMinesCount + " ]");
 			break;
 		case EXPLOSED:
 			image.append("[ @ ]");
@@ -62,32 +91,12 @@ public class Cell {
 		return image.toString();
 	}
 
-	public void putMine() {
-		this.mine = true;
-	}
-
 	public boolean hasMine() {
 		return mine;
 	}
 
 	public Status getStatus() {
 		return status;
-	}
-
-	public void open() {
-		this.status = mine ? Status.EXPLOSED : Status.OPENED;
-	}
-
-	public void tagAsMine() {
-		if (status == Status.CLOSED) {
-			status = Status.TAGGED;
-		}
-	}
-
-	public void untagAsMine() {
-		if (status == Status.TAGGED) {
-			this.status = Status.CLOSED;
-		}
 	}
 
 	public boolean isExplosed() {
@@ -102,20 +111,20 @@ public class Cell {
 		return status == Status.CLOSED;
 	}
 
-	public int getX() {
-		return x;
+	public boolean isOpened() {
+		return status == Status.OPENED;
 	}
 
-	public int getY() {
-		return y;
+	public int getAdjacentMinesCount() {
+		return adjacentMinesCount;
 	}
 
-	public int getNeighbourMinesCount() {
-		return neighbourMinesCount;
+	public Coordinate getCoordinate() {
+		return coordinate;
 	}
 
-	public void incrementNeighbourMineCount() {
-		this.neighbourMinesCount++;
+	public Cell copy(Status status) {
+		return new Cell(this.coordinate, this.adjacentMinesCount, this.mine, status);
 	}
 
 }

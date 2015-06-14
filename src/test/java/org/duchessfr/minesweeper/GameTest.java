@@ -11,12 +11,13 @@ public class GameTest {
 
 	Game game;
 	Grid grid = mock(Grid.class);
+	GridConfig config = mock(GridConfig.class);
 	Player player = mock(Player.class);
 	PlayerInputReader reader = mock(PlayerInputReader.class);
 
 	@Before
 	public void init() {
-		when(reader.readMines()).thenReturn(3);
+		when(reader.readConfiguration()).thenReturn(config);
 		game = new Game(grid, player, reader);
 	}
 

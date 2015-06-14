@@ -14,16 +14,25 @@ public class PlayerInputReader implements AutoCloseable {
 		this.scanner = scanner;
 	}
 
-	public int readSize() {
-		System.out.println("Enter size :");
+	public GridConfig readConfiguration() {
+		int size = -1;
+		while (size <= 0) {
+			System.out.print("Enter size (1..N) : ");
+			size = readSaveInt();
+		}
 
-		return readSaveInt();
-	}
+		System.out.println("");
 
-	public int readMines() {
-		System.out.println("Enter mines :");
+		int mines = -1;
+		System.out.print("Enter mines (smaller than " + size * size + ") : ");
 
-		return readSaveInt();
+		while (mines < 0 || mines > size * size) {
+			mines = readSaveInt();
+		}
+
+		System.out.println("");
+
+		return new GridConfig(size, mines);
 	}
 
 	public int readX(int max) {
