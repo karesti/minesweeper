@@ -21,7 +21,7 @@ public class Cell {
 		this.status = status;
 	}
 
-	static public class Builder {
+	static public class CellBuilder {
 
 		private final Coordinate coordinate;
 
@@ -31,25 +31,25 @@ public class Cell {
 
 		private int adjacentMinesCount = 0;
 
-		private Builder(Coordinate coordinate) {
+		private CellBuilder(Coordinate coordinate) {
 			this.coordinate = coordinate;
 		}
 
-		public static Builder start(Coordinate coordinate) {
-			return new Builder(coordinate);
+		public static CellBuilder start(Coordinate coordinate) {
+			return new CellBuilder(coordinate);
 		}
 
-		public Builder withMine() {
+		public CellBuilder withMine() {
 			this.mine = true;
 			return this;
 		}
 
-		public Builder withAdjacentMinesCount(int adjMinesCount) {
+		public CellBuilder withAdjacentMinesCount(int adjMinesCount) {
 			this.adjacentMinesCount = adjMinesCount;
 			return this;
 		}
 
-		public Builder withStatus(Status status) {
+		public CellBuilder withStatus(Status status) {
 			this.status = status;
 			return this;
 		}

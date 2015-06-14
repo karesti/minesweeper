@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
+import org.duchessfr.minesweeper.Cell.CellBuilder;
 import org.duchessfr.minesweeper.Cell.Status;
 
 public class Grid {
@@ -50,7 +51,7 @@ public class Grid {
 				int randomX = random.nextInt(config.getSize());
 				int randomY = random.nextInt(config.getSize());
 				if (empty(randomX, randomY)) {
-					cells[randomX][randomY] = Cell.Builder.start(new Coordinate(randomX, randomY)).withMine().build();
+					cells[randomX][randomY] = CellBuilder.start(new Coordinate(randomX, randomY)).withMine().build();
 					mines--;
 				}
 			}
@@ -61,7 +62,7 @@ public class Grid {
 				for (int y = 0; y < config.getSize(); y++) {
 					if (empty(x, y)) {
 						int numMines = calculateAdjacentMineCount(x, y);
-						cells[x][y] = Cell.Builder.start(new Coordinate(x, y)).withAdjacentMinesCount(numMines).build();
+						cells[x][y] = CellBuilder.start(new Coordinate(x, y)).withAdjacentMinesCount(numMines).build();
 					}
 				}
 			}
