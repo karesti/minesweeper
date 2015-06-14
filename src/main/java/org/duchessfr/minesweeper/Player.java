@@ -14,7 +14,21 @@ public class Player {
 
 	@Override
 	public String toString() {
-		return "Mines left :" + minesLeft;
+		String status = null;
+		if (isDead()) {
+			status = "You are dead !!";
+
+		} else if (isTheMasterOfMines()) {
+			status = "You are the master of the mines !! Well done";
+		}
+		if (minesLeft == 0) {
+			status = "You have no mines left and you didn't find them all ...";
+
+		} else {
+			status = "Mines left :" + minesLeft;
+		}
+
+		return status;
 	}
 
 	public boolean isDead() {
@@ -41,7 +55,7 @@ public class Player {
 		this.minesFound--;
 	}
 
-	public void decrementMinedLeft() {
+	public void decrementMinesLeft() {
 		minesLeft--;
 	}
 

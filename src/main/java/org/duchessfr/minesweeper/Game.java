@@ -15,14 +15,14 @@ public class Game {
 	public void run() {
 
 		while (!isOver()) {
+			printGameStatus();
 			askAction();
 		}
 
-		end();
+		printGameStatus();
 	}
 
 	private void askAction() {
-		printGameStatus();
 
 		int x = reader.readX(grid.getSize());
 		int y = reader.readY(grid.getSize());
@@ -43,16 +43,6 @@ public class Game {
 		}
 	}
 
-	private void end() {
-		printGameStatus();
-
-		if (player.isDead())
-			System.out.println("You are dead !!");
-		else
-			System.out.println("You are the master of the mines !! Well done");
-
-	}
-
 	private void printGameStatus() {
 		System.out.println(player);
 		System.out.println(grid);
@@ -63,16 +53,19 @@ public class Game {
 	}
 
 	void open(Coordinate co) {
+		if (!grid.get(co).isClosed())
+			return;
+
 		grid.open(co);
 		player.setExplosed(grid.get(co).isExplosed());
 	}
 
 	void tagMine(Coordinate co) {
-		if (grid.get(co).isTagged())
+		if (!grid.get(co).isClosed())
 			return;
 
 		if (player.hasMinesLeft()) {
-			player.decrementMinedLeft();
+			player.decrementMinesLeft();
 			grid.tagMine(co);
 			if (grid.get(co).hasMine()) {
 				player.incrementFoundMines();

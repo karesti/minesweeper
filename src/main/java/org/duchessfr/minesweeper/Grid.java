@@ -60,19 +60,22 @@ public class Grid {
 			for (int x = 0; x < config.getSize(); x++) {
 				for (int y = 0; y < config.getSize(); y++) {
 					if (empty(x, y)) {
-						int numMines = 0;
-						for (Coordinate adjCo : config.getValidAdjacentCoordinates(new Coordinate(x, y))) {
-							Cell adj = cells[adjCo.getX()][adjCo.getY()];
-
-							if (adj != null && adj.hasMine()) {
-								numMines++;
-							}
-						}
-
+						int numMines = calculateAdjacentMineCount(x, y);
 						cells[x][y] = Cell.Builder.start(new Coordinate(x, y)).withAdjacentMinesCount(numMines).build();
 					}
 				}
 			}
+		}
+
+		private int calculateAdjacentMineCount(int x, int y) {
+			int numMines = 0;
+			for (Coordinate adjCo : config.getValidAdjacentCoordinates(new Coordinate(x, y))) {
+				Cell adj = cells[adjCo.getX()][adjCo.getY()];
+				if (adj != null && adj.hasMine()) {
+					numMines++;
+				}
+			}
+			return numMines;
 		}
 
 		private boolean empty(int x, int y) {
@@ -109,11 +112,17 @@ public class Grid {
 		}
 
 		selected = selected.copy(Status.OPENED);
-		this.put(selected);
+		put(selected);
 
 		if (selected.getAdjacentMinesCount() > 0)
 			return saveOpen;
 
+		openAdjacents(selected);
+
+		return saveOpen;
+	}
+
+	private void openAdjacents(Cell selected) {
 		Queue<Cell> aux = new LinkedList<Cell>();
 		aux.add(selected);
 		while (!aux.isEmpty()) {
@@ -128,7 +137,6 @@ public class Grid {
 				}
 			}
 		}
-		return saveOpen;
 	}
 
 	public boolean tagMine(Coordinate co) {
