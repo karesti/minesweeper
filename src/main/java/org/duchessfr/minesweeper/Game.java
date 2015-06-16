@@ -84,6 +84,7 @@ public class Game {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(player);
+		builder.append("\n\n");
 		builder.append(grid);
 		return builder.toString();
 	}
