@@ -102,13 +102,12 @@ public class Grid {
 
 		boolean saveOpen = true;
 
-		Cell selected = this.get(co);
+		Cell selected = get(co);
 		if (!selected.isClosed())
-			return true;
+			return saveOpen;
 
 		if (selected.hasMine()) {
-			selected = selected.copy(Status.EXPLOSED);
-			this.put(selected);
+			explose();
 			return false;
 		}
 
@@ -121,6 +120,17 @@ public class Grid {
 		openAdjacents(selected);
 
 		return saveOpen;
+	}
+
+	private void explose() {
+		for (int x = 0; x < config.getSize(); x++) {
+			for (int y = 0; y < config.getSize(); y++) {
+				if (cells[x][y].hasMine()) {
+					put(cells[x][y].copy(Status.EXPLOSED));
+				}
+			}
+		}
+
 	}
 
 	private void openAdjacents(Cell selected) {

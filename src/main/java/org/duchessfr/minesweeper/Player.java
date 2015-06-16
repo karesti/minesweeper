@@ -20,12 +20,12 @@ public class Player {
 
 		} else if (isTheMasterOfMines()) {
 			status = "You are the master of the mines !! Well done";
-		}
-		if (minesLeft == 0) {
+
+		} else if (minesLeft == 0) {
 			status = "You have no mines left and you didn't find them all ...";
 
 		} else {
-			status = "Mines left :" + minesLeft;
+			status = "Mines left : " + minesLeft;
 		}
 
 		return status;

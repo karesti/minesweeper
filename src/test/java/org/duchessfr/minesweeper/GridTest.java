@@ -126,14 +126,19 @@ public class GridTest {
 	}
 
 	@Test
-	public void opening_a_cell_with_mine_exploses() {
+	public void opening_a_cell_with_mine_exploses_every_mine() {
 
-		Grid grid = GridBuilder.config(new GridConfig(1, 1)).create();
+		Grid grid = GridBuilder.config(new GridConfig(2, 4)).create();
 
 		boolean saveOpen = grid.open(coordinate);
 
+		StringBuilder explosedState = new StringBuilder();
+		explosedState.append("(0,0)[ @ ] (0,1)[ @ ] \n");
+		explosedState.append("(1,0)[ @ ] (1,1)[ @ ] \n");
+
 		assertThat(saveOpen).isFalse();
 		assertThat(grid.get(coordinate).isExplosed()).isTrue();
+		assertThat(grid.toString()).isEqualTo(explosedState.toString());
 	}
 
 	@Test

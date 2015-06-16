@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -18,7 +19,9 @@ public class GameTest {
 	Player player = mock(Player.class);
 	Cell cell = mock(Cell.class);
 	PlayerInputReader reader = mock(PlayerInputReader.class);
+	PlayerOutputWriter writer = mock(PlayerOutputWriter.class);
 	Coordinate coordinate = mock(Coordinate.class);
+	int DEFAULT_SIZE = 3;
 
 	Game game;
 
@@ -26,8 +29,21 @@ public class GameTest {
 	public void init() {
 		when(reader.readConfiguration()).thenReturn(config);
 		when(grid.get(any(Coordinate.class))).thenReturn(cell);
+		when(grid.getSize()).thenReturn(DEFAULT_SIZE);
 
-		game = new Game(grid, player, reader);
+		game = new Game(grid, player, reader, writer);
+	}
+
+	@Test
+	public void ask_action_while_game_is_not_over() {
+		when(player.isDead()).thenReturn(false, false, true);
+		when(reader.readX(DEFAULT_SIZE)).thenReturn(0, 1);
+		when(reader.readY(DEFAULT_SIZE)).thenReturn(2, 0);
+
+		game.run();
+
+		verify(reader, times(2)).readAction();
+		verify(writer, times(3)).printGameStatus(game);
 	}
 
 	@Test

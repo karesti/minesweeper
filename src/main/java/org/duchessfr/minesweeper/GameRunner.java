@@ -8,11 +8,13 @@ public class GameRunner {
 
 		try (PlayerInputReader reader = new PlayerInputReader()) {
 
+			PlayerOutputWriter writer = new PlayerOutputWriter();
+
 			GridConfig config = reader.readConfiguration();
 
 			Grid grid = GridBuilder.config(config).create();
 
-			Game game = new Game(grid, new Player(config.getMines()), reader);
+			Game game = new Game(grid, new Player(config.getMines()), reader, writer);
 
 			game.run();
 
